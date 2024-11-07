@@ -77,6 +77,8 @@ def save_game_state(pyboy, filename="save_state.state"):
 
 # Main game loop for manual control
 def play_manually():
+    with open("State/trainer_fight_1.state", "rb") as state:
+        pyboy.load_state(state)
     total_frames = 0
     done = False
     while not done:
