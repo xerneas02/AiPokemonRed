@@ -1,19 +1,17 @@
 import pyboy.api
 import pyboy.utils
 from pynput import keyboard
-from CNN import *
-from DQNAgent import *
 from GameFrame import *
 
 from tensorflow.keras.optimizers import Adam
 from pyboy import PyBoy
-from Rewards import *
 import time
 from Constante import *
+from AccessMemory import *
 import threading
 
 # PyBoy ROM and settings
-rom_path = "Rom/Tetris.gb"
+rom_path = "Rom/Pokemon Red.gb"
 show_display = True  # Set to True for real-time display
 
 # Start PyBoy emulator
