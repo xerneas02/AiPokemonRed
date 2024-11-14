@@ -11,13 +11,13 @@ from AccessMemory import *
 import threading
 
 # PyBoy ROM and settings
-rom_path = "Rom/Pokemon Red.gb"
-show_display = True  # Set to True for real-time display
+ROM_PAH = "Rom/Pokemon Red.gb"
+SHOW_DISPLAY = True  # Set to True for real-time display
 
 # Start PyBoy emulator
-pyboy = PyBoy(rom_path)
+pyboy = PyBoy(ROM_PAH, window_type="null" if not SHOW_DISPLAY else "SDL2")
 
-if show_display:
+if SHOW_DISPLAY:
     pyboy.set_emulation_speed(0)  # Real-time display
 else:
     pyboy.set_emulation_speed(1_000_000)  # Fast mode without display
@@ -82,7 +82,7 @@ def play_manually():
     total_frames = 0
     done = False
     while not done:
-        if show_display:
+        if SHOW_DISPLAY:
             time.sleep(0.016667)  # 60 FPS
 
         # Check which keys are pressed and send the corresponding action to the game
