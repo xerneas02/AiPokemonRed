@@ -14,14 +14,14 @@ This project aims to develop an AI capable of playing Pokémon Red using reinfor
   - `PositionLoggingCallback.py`: Logs the positions of the player during training.
 - **Logs/**: Directory for storing logs and TensorBoard data.
 - **Model/**: Directory for saving trained models.
-- **GameFrame.py**: Preprocesses game frames for input into the neural network.
-- **Constante.py**: Defines constants used throughout the project.
-- **MemoryAdresse.py**: Contains memory addresses for accessing game data.
-- **AccessMemory.py**: Functions for accessing and manipulating game memory.
-- **ManualPlaying.py**: Script for manually playing the game using keyboard inputs.
-- **TestModel.py**: Script for testing the trained model.
-- **TrainModel.py**: Script for training the model.
-- **requirement.txt**: List of required Python packages.
+- `GameFrame.py`: Preprocesses game frames for input into the neural network.
+- `Constante.py`: Defines constants used throughout the project.
+- `MemoryAdresse.py`: Contains memory addresses for accessing game data.
+- `AccessMemory.py`: Functions for accessing and manipulating game memory.
+- `ManualPlaying.py`: Script for manually playing the game using keyboard inputs.
+- `TestModel.py`: Script for testing the trained model.
+- `TrainModel.py`: Script for training the model.
+- `requirement.txt`: List of required Python packages.
 
 ## Installation
 
