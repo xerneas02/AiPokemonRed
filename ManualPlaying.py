@@ -77,18 +77,15 @@ def save_game_state(pyboy, filename="save_state.state"):
 
 # Main game loop for manual control
 def play_manually():
-    with open("State/trainer_fight_1.state", "rb") as state:
+    with open("State/starting_house/starting_state.state", "rb") as state:
         pyboy.load_state(state)
     total_frames = 0
     done = False
     while not done:
-        if SHOW_DISPLAY:
-            time.sleep(0.016667)  # 60 FPS
-
         # Check which keys are pressed and send the corresponding action to the game
         for action in keys_pressed:
             if action == 'save':  # Check if the save state button was pressed
-                save_game_state(pyboy, "save_state.state")
+                save_game_state(pyboy, "State/starting_house/save_state.state")
             else:
                 pyboy.button(action)
 

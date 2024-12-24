@@ -47,3 +47,8 @@ def get_pos(pyboy):
     map_n = pyboy.memory[MAP_N_ADDRESS]
     
     return x_pos, y_pos, map_n
+
+def set_pos(pyboy, x, y, map_n):
+    pyboy.memory[X_POS_ADDRESS] = x
+    pyboy.memory[Y_POS_ADDRESS] = y
+    pyboy.memory[MAP_N_ADDRESS] = map_n
