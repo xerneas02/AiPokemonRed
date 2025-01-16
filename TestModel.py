@@ -1,12 +1,26 @@
+import os
+import glob
 from stable_baselines3 import PPO
 from Env.PokemonRedEnv import PokemonRedEnv
+
+def get_most_recent_model(model_dir):
+    list_of_files = glob.glob(os.path.join(model_dir, '*.zip'))  # Adjust the extension if needed
+    if not list_of_files:
+        raise FileNotFoundError("No model files found in the directory.")
+    latest_file = max(list_of_files, key=os.path.getctime)
+    return latest_file
 
 def play():
     # Create the environment
     env = PokemonRedEnv("Rom/Pokemon Red.gb", show_display=True)
 
+    # Get the most recent model file
+    model_file = get_most_recent_model("Model")
+
+    print("Model file: ", model_file)
+
     # Load the trained model
-    model = PPO.load("Model/ppo_pokemon_red", env=env)
+    model = PPO.load(model_file, env=env)
 
     # Reset the environment
     obs = env.reset()

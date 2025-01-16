@@ -121,9 +121,9 @@ class PokemonRedEnv(gym.Env):
         done = self._is_done()
 
         # Appliquer une pénalité si l'agent ne découvre pas de nouvelles positions pendant trop longtemps
-        if self.steps_without_new_position >= self.max_steps_without_new_position:
-            reward -= 10  # Pénalité pour ne pas découvrir de nouvelles positions
-            done = True
+        #if self.steps_without_new_position >= self.max_steps_without_new_position:
+        #    reward -= 100  # Pénalité pour ne pas découvrir de nouvelles positions
+        #    done = True
 
 
         return observation, reward, done, {}
@@ -182,7 +182,7 @@ class PokemonRedEnv(gym.Env):
             0.1  * exploration_reward +
             1.0  * goal_reward +
             0.0  * penalty_for_repeating_action +
-            100.0 * (map_id == 0)  # Bonus for reaching the goal map
+            10.0 * (map_id == 0)  # Bonus for reaching the goal map
         )
 
         return total_reward
@@ -191,7 +191,7 @@ class PokemonRedEnv(gym.Env):
         # Logique pour vérifier la fin de l'épisode
         
         x, y, map_id = get_pos(self.pyboy)
-        return map_id == 0 or self.steps >= 5000
+        return self.steps >= 5000 # or map_id == 0
 
     def close(self):
         # Fermer PyBoy proprement
