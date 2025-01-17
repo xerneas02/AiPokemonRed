@@ -14,6 +14,9 @@ import threading
 ROM_PAH = "Rom/Pokemon Red.gb"
 SHOW_DISPLAY = True  # Set to True for real-time display
 
+nbBattle = 40
+inBattle = False
+
 # Start PyBoy emulator
 pyboy = PyBoy(ROM_PAH, window_type="null" if not SHOW_DISPLAY else "SDL2")
 
@@ -77,12 +80,22 @@ def save_game_state(pyboy, filename="save_state.state"):
 
 # Main game loop for manual control
 def play_manually():
+    global nbBattle, inBattle
+
     with open("State/starting_house/starting_state.state", "rb") as state:
         pyboy.load_state(state)
     total_frames = 0
     done = False
     while not done:
-        time.sleep(0.006)
+        time.sleep(0.003)
+        if not inBattle and pyboy.memory[ENEMY_POKEMONS[0]] != 0:
+            inBattle = True
+            nbBattle += 1
+            save_game_state(pyboy, f"State/battle/{poke_id_to_name[pyboy.memory[ENEMY_POKEMONS[0]]]}_{nbBattle}.state")
+        
+        if inBattle and pyboy.memory[ENEMY_POKEMONS[0]] == 0:
+            inBattle = False
+        
         # Check which keys are pressed and send the corresponding action to the game
         for action in keys_pressed.copy():
             if action == 'save':  # Check if the save state button was pressed
@@ -94,7 +107,7 @@ def play_manually():
         pyboy.tick()
 
         # Display player position
-        display_position(pyboy)
+        #display_position(pyboy)
 
         total_frames += 1
 
