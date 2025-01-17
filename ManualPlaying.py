@@ -82,8 +82,9 @@ def play_manually():
     total_frames = 0
     done = False
     while not done:
+        time.sleep(0.006)
         # Check which keys are pressed and send the corresponding action to the game
-        for action in keys_pressed:
+        for action in keys_pressed.copy():
             if action == 'save':  # Check if the save state button was pressed
                 save_game_state(pyboy, "State/starting_house/save_state.state")
             else:
