@@ -8,13 +8,14 @@ from pyboy import PyBoy
 import time
 from Constante import *
 from AccessMemory import *
+from State import get_battle_state, print_state
 import threading
 
 # PyBoy ROM and settings
 ROM_PAH = "Rom/Pokemon Red.gb"
 SHOW_DISPLAY = True  # Set to True for real-time display
 
-nbBattle = 40
+nbBattle = 38
 inBattle = False
 
 # Start PyBoy emulator
@@ -82,7 +83,7 @@ def save_game_state(pyboy, filename="save_state.state"):
 def play_manually():
     global nbBattle, inBattle
 
-    with open("State/starting_house/starting_state.state", "rb") as state:
+    with open("State/battle/onix_39.state", "rb") as state:
         pyboy.load_state(state)
     total_frames = 0
     done = False
@@ -91,7 +92,7 @@ def play_manually():
         if not inBattle and pyboy.memory[ENEMY_POKEMONS[0]] != 0:
             inBattle = True
             nbBattle += 1
-            save_game_state(pyboy, f"State/battle/{poke_id_to_name[pyboy.memory[ENEMY_POKEMONS[0]]]}_{nbBattle}.state")
+            save_game_state(pyboy, f"State/battle/{POKEMON_ID_TO_NAME[pyboy.memory[ENEMY_POKEMONS[0]]]}_{nbBattle}.state")
         
         if inBattle and pyboy.memory[ENEMY_POKEMONS[0]] == 0:
             inBattle = False
@@ -107,7 +108,10 @@ def play_manually():
         pyboy.tick()
 
         # Display player position
-        #display_position(pyboy)
+        #state = get_battle_state(pyboy)
+        #if state[0] != 0:
+            #print_state(state)
+            #print("################################################")
 
         total_frames += 1
 

@@ -2,7 +2,7 @@ ImageSize = 84
 Ncouleur = 4
 action_space = ["up", "down", "left", "right", "a", "b"]
 
-poke_id_to_name = {
+POKEMON_ID_TO_NAME= {
     0: "none",
     1: "rhydon",
     2: "kangaskhan",
@@ -196,7 +196,8 @@ poke_id_to_name = {
     190: "victreebel"
 }
 
-base_stats = {
+POKEMON_BASE_STATS = {
+    "none": {'hp':-1, 'atk':-1 , 'def': -1, 'spd':-1, 'spc':-1, 'type1':'BIRD', 'type2':'BIRD'},
     "abra": {'hp': 25, 'atk': 20, 'def': 15, 'spd': 90, 'spc': 105, 'type1': 'PSYCHIC_TYPE', 'type2': 'PSYCHIC_TYPE'},      
     "aerodactyl": {'hp': 80, 'atk': 105, 'def': 65, 'spd': 130, 'spc': 60, 'type1': 'ROCK', 'type2': 'FLYING'},
     "alakazam": {'hp': 55, 'atk': 50, 'def': 45, 'spd': 120, 'spc': 135, 'type1': 'PSYCHIC_TYPE', 'type2': 'PSYCHIC_TYPE'}, 
@@ -350,7 +351,8 @@ base_stats = {
     "zubat": {'hp': 40, 'atk': 45, 'def': 35, 'spd': 55, 'spc': 40, 'type1': 'POISON', 'type2': 'FLYING'}
 }
 
-moves = {
+MOVES_ID_TO_NAME = {
+    -1: "NONE",
     0: "POUND",
     1: "KARATE_CHOP",
     2: "DOUBLESLAP",
@@ -518,7 +520,11 @@ moves = {
     164: "STRUGGLE"
 }
 
-move_stats = {
+NEW_MOVES_ID_TO_NAME = {key + 1: val for key, val in MOVES_ID_TO_NAME.items()}
+MOVES_ID_TO_NAME = NEW_MOVES_ID_TO_NAME
+
+MOVE_STATS = {
+    "NONE": {'effect':'NO_ADDITIONAL_EFFECT', 'power':0, 'type':'BIRD', 'accuracy':0, 'pp':0},
     "POUND": {'effect': 'NO_ADDITIONAL_EFFECT', 'power': 40, 'type': 'NORMAL', 'accuracy': 100, 'pp': 35},
     "KARATE_CHOP": {'effect': 'NO_ADDITIONAL_EFFECT', 'power': 50, 'type': 'NORMAL', 'accuracy': 100, 'pp': 25},
     "DOUBLESLAP": {'effect': 'TWO_TO_FIVE_ATTACKS_EFFECT', 'power': 15, 'type': 'NORMAL', 'accuracy': 85, 'pp': 10},     
@@ -686,7 +692,90 @@ move_stats = {
     "STRUGGLE": {'effect': 'RECOIL_EFFECT', 'power': 50, 'type': 'NORMAL', 'accuracy': 100, 'pp': 10}
 }
 
-place_label = {
+MOVE_EFFECT_TO_ID = {
+    'SLEEP_EFFECT': 0,
+    'POISON_EFFECT': 1,
+    'DRAIN_HP_EFFECT': 2,
+    'BURN_SIDE_EFFECT1': 3,
+    'FREEZE_SIDE_EFFECT1': 4,
+    'PARALYZE_SIDE_EFFECT1': 5,
+    'EXPLODE_EFFECT': 6,
+    'DREAM_EATER_EFFECT': 7,
+    'MIRROR_MOVE_EFFECT': 8,
+    'ATTACK_UP1_EFFECT': 9,
+    'DEFENSE_UP1_EFFECT': 10,
+    'SPEED_UP1_EFFECT': 11,
+    'SPECIAL_UP1_EFFECT': 12,
+    'ACCURACY_UP1_EFFECT': 13,
+    'EVASION_UP1_EFFECT': 14,
+    'PAY_DAY_EFFECT': 15,
+    'SWIFT_EFFECT': 16,
+    'ATTACK_DOWN1_EFFECT': 17,
+    'DEFENSE_DOWN1_EFFECT': 18,
+    'SPEED_DOWN1_EFFECT': 19,
+    'SPECIAL_DOWN1_EFFECT': 20,
+    'ACCURACY_DOWN1_EFFECT': 21,
+    'EVASION_DOWN1_EFFECT': 22,
+    'CONVERSION_EFFECT': 23,
+    'HAZE_EFFECT': 24,
+    'BIDE_EFFECT': 25,
+    'THRASH_PETAL_DANCE_EFFECT': 26,
+    'SWITCH_AND_TELEPORT_EFFECT': 27,
+    'TWO_TO_FIVE_ATTACKS_EFFECT': 28,
+    'FLINCH_SIDE_EFFECT1': 29,
+    'SLEEP_EFFECT': 30,
+    'POISON_SIDE_EFFECT2': 31,
+    'BURN_SIDE_EFFECT2': 32,
+    'PARALYZE_SIDE_EFFECT2': 33,
+    'FLINCH_SIDE_EFFECT2': 34,
+    'OHKO_EFFECT': 35,
+    'CHARGE_EFFECT': 36,
+    'SUPER_FANG_EFFECT': 37,
+    'SPECIAL_DAMAGE_EFFECT': 38,
+    'TRAPPING_EFFECT': 39,
+    'FLY_EFFECT': 40,
+    'ATTACK_TWICE_EFFECT': 41,
+    'JUMP_KICK_EFFECT': 42,
+    'MIST_EFFECT': 43,
+    'FOCUS_ENERGY_EFFECT': 44,
+    'RECOIL_EFFECT': 45,
+    'CONFUSION_EFFECT': 46,
+    'ATTACK_UP2_EFFECT': 47,
+    'DEFENSE_UP2_EFFECT': 48,
+    'SPEED_UP2_EFFECT': 49,
+    'SPECIAL_UP2_EFFECT': 50,
+    'ACCURACY_UP2_EFFECT': 51,
+    'EVASION_UP2_EFFECT': 52,
+    'HEAL_EFFECT': 53,
+    'TRANSFORM_EFFECT': 54,
+    'ATTACK_DOWN2_EFFECT': 55,
+    'DEFENSE_DOWN2_EFFECT': 56,
+    'SPEED_DOWN2_EFFECT': 57,
+    'SPECIAL_DOWN2_EFFECT': 58,
+    'ACCURACY_DOWN2_EFFECT': 59,
+    'EVASION_DOWN2_EFFECT': 60,
+    'LIGHT_SCREEN_EFFECT': 61,
+    'REFLECT_EFFECT': 62,
+    'POISON_EFFECT': 63,
+    'PARALYZE_EFFECT': 64,
+    'ATTACK_DOWN_SIDE_EFFECT': 65,
+    'DEFENSE_DOWN_SIDE_EFFECT': 66,
+    'SPEED_DOWN_SIDE_EFFECT': 67,
+    'SPECIAL_DOWN_SIDE_EFFECT': 68,
+    'CONFUSION_SIDE_EFFECT': 69,
+    'TWINEEDLE_EFFECT': 70,
+    'SUBSTITUTE_EFFECT': 71,
+    'HYPER_BEAM_EFFECT': 72,
+    'RAGE_EFFECT': 73,
+    'MIMIC_EFFECT': 74,
+    'METRONOME_EFFECT': 75,
+    'LEECH_SEED_EFFECT': 76,
+    'SPLASH_EFFECT': 77,
+    'DISABLE_EFFECT': 78,
+    'NO_ADDITIONAL_EFFECT': 79
+}
+
+MAP_LABELS = {
     0: 'PALLET TOWN', 
     1: 'VIRIDIAN CITY', 
     2: 'PEWTER CITY', 
@@ -742,7 +831,7 @@ place_label = {
     52: 'POWER PLANT'
 }
 
-type_matchup = {
+TYPE_MATCHUP = {
     ('WATER', 'FIRE'): "SUPER_EFFECTIVE",
     ('FIRE', 'GRASS'): "SUPER_EFFECTIVE",
     ('FIRE', 'ICE'): "SUPER_EFFECTIVE",
@@ -827,7 +916,14 @@ type_matchup = {
     ('DRAGON', 'DRAGON'): "SUPER_EFFECTIVE"
 }
 
-position_label = {
+TYPE_EFFECTIVENESS = {
+    "SUPER_EFFECTIVE": 2,
+    "EFFECTIVE": 1,
+    "NOT_VERY_EFFECTIVE": 0.5,
+    "NO_EFFECT": 0
+}
+
+POSITION_LABEL = {
     (3, 6, 38):"StartingPos",
     (7, 1, 38):"ExitRoom",
     (2, 8, 37):"ExitHome",
@@ -840,3 +936,23 @@ position_label = {
     (29,20, 1):"MartEntrance"
 }
 
+TYPES_NAME_TO_ID = {
+    "NORMAL": 0,
+    "FIGTHING": 1,
+    "FLYING": 2,
+    "POISON": 3,
+    "FIRE": 4,
+    "WATER": 5,
+    "GRASS": 6,
+    "ELECTRIC": 7,
+    "PSYCHIC_TYPE": 8,
+    "ICE": 9,
+    "GROUND": 10,
+    "ROCK": 11,
+    "BIRD": 12,
+    "BUG": 13,
+    "GHOTS": 14,
+    "DRAGON": 15
+}
+
+TYPES_ID_TO_NAME = {v: k for k, v in TYPES_NAME_TO_ID.items()}
