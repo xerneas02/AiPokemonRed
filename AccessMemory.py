@@ -33,9 +33,18 @@ def get_total_items(pyboy : pyboy.PyBoy):
     return pyboy.memory[TOTAL_ITEMS]
 
 def set_text_speed_fast(pyboy : pyboy.PyBoy):
-    current_options = pyboy.memory[OPTIONS_ADDRESS]
+    current_options = pyboy.memory[OPTIONS_ADDRESS] 
     new_options = (current_options & MASK_HIGH_NYBBLE) | (TEXT_SPEED_FAST & 0x0F)
     pyboy.memory[OPTIONS_ADDRESS] = new_options
+
+def set_battle_animation_off(pyboy: pyboy.PyBoy):
+    """
+    Disable battle animations by setting Bit 7 of OPTIONS_ADDRESS to 1.
+    """
+    current_options = pyboy.memory[OPTIONS_ADDRESS]    
+    new_options = current_options | 0b10000000
+    pyboy.memory[OPTIONS_ADDRESS] = new_options
+
 
 
 # Function to check if the museum ticket event is active (flag-based event)

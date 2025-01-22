@@ -17,8 +17,11 @@ def get_battle_state(pyboy : pyboy.PyBoy):
 
         moves_names = [MOVES_ID_TO_NAME[active_pokemon["moves"][i]["id"]] for i in range(4)]
         moves_info = deepcopy(active_pokemon["moves"])
+
         for i in range(len(moves_info)):
+            if type(moves_info[i]["type"]) is not int:
                 moves_info[i]["type"] = TYPES_NAME_TO_ID[moves_info[i]["type"]]
+            if type(moves_info[i]["effect"]) is not int:
                 moves_info[i]["effect"] = MOVE_EFFECT_TO_ID[moves_info[i]["effect"]]
 
         moves_effectiveness = [get_effectiveness(moves_info[i]["type"], enemy_pokemon_stats["type1"], enemy_pokemon_stats["type2"]) for i in range(4)]

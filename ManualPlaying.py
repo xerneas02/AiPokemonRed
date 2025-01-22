@@ -10,6 +10,9 @@ from Constante import *
 from AccessMemory import *
 from State import get_battle_state, print_state
 import threading
+from PIL import Image
+from Input import *
+import random
 
 # PyBoy ROM and settings
 ROM_PAH = "Rom/Pokemon Red.gb"
@@ -36,7 +39,9 @@ key_mapping = {
     'shift': 'b',
     'a': 'start',
     'e': 'select',
-    'r': 'save'  # "R" key for saving the game state
+    'r': 'save',  # "R" key for saving the game state
+    'p': 'screen',
+    't': 'attack'
 }
 
 # Store the currently pressed keys
@@ -64,6 +69,14 @@ def on_release(key):
         elif key == keyboard.Key.space:
             keys_pressed.discard('a')
 
+
+# Function to save a screenshot of the emulator screen
+def save_screenshot(pyboy : PyBoy, filename="screenshot.png"):
+    screen_image = pyboy.screen.ndarray
+    screen_image = Image.fromarray(screen_image)
+    screen_image.save(filename)
+    print(f"Screenshot saved to {filename}")
+
 # Start keyboard listener
 listener = keyboard.Listener(on_press=on_press, on_release=on_release)
 listener.start()
@@ -85,8 +98,11 @@ def play_manually():
 
     with open("State/battle/onix_39.state", "rb") as state:
         pyboy.load_state(state)
+
+    set_battle_animation_off(pyboy)
     total_frames = 0
     done = False
+    battle_started = False
     while not done:
         time.sleep(0.003)
         if not inBattle and pyboy.memory[ENEMY_POKEMONS[0]] != 0:
@@ -101,17 +117,37 @@ def play_manually():
         for action in keys_pressed.copy():
             if action == 'save':  # Check if the save state button was pressed
                 save_game_state(pyboy, "State/starting_house/save_state.state")
+            elif action == 'screen':  # Check if the screenshot button was pressed
+                save_screenshot(pyboy, "screenshot.png")
+            elif action == 'attack':
+                attack(pyboy, 3)
             else:
                 pyboy.button(action)
 
         # Advance the game by one tick
         pyboy.tick()
+        
+        if is_battle_started(pyboy):
+            print("Battle need start")
+            pyboy.button('a')
 
+        if is_on_attack_menu(pyboy):
+            battle_started = True
+
+        if battle_started:
+            attack(pyboy, random.randint(0, 3))
+            
+        
+        print(is_waiting(pyboy))
+        
+
+ 
         # Display player position
-        #state = get_battle_state(pyboy)
+        state = get_battle_state(pyboy)
         #if state[0] != 0:
-            #print_state(state)
-            #print("################################################")
+        #print_state(state)
+        #print("################################################")
+        
 
         total_frames += 1
 
