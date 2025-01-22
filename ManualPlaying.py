@@ -100,6 +100,8 @@ def play_manually():
         pyboy.load_state(state)
 
     set_battle_animation_off(pyboy)
+    set_text_speed_fast(pyboy)
+
     total_frames = 0
     done = False
     battle_started = False
@@ -120,7 +122,7 @@ def play_manually():
             elif action == 'screen':  # Check if the screenshot button was pressed
                 save_screenshot(pyboy, "screenshot.png")
             elif action == 'attack':
-                attack(pyboy, 3)
+                switch(pyboy, 0)
             else:
                 pyboy.button(action)
 
@@ -128,17 +130,16 @@ def play_manually():
         pyboy.tick()
         
         if is_battle_started(pyboy):
-            print("Battle need start")
             pyboy.button('a')
 
         if is_on_attack_menu(pyboy):
             battle_started = True
 
         if battle_started:
-            attack(pyboy, random.randint(0, 3))
-            
+            pass
+            #attack(pyboy, random.randint(0, 3))
         
-        print(is_waiting(pyboy))
+        #print(is_on_pokemon(pyboy))
         
 
  

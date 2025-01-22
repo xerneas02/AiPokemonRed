@@ -45,13 +45,13 @@ def get_battle_state(pyboy : pyboy.PyBoy):
 
         state = np.array([
             # Player's Pokemon
-            active_pokemon["id"],
-            TYPES_NAME_TO_ID[active_pokemon_stats["type1"]],
-            TYPES_NAME_TO_ID[active_pokemon_stats["type2"]],
-            active_pokemon["current_hp"],
-            active_pokemon["max_hp"],
-            active_pokemon["level"],
-            active_pokemon["status"],
+            active_pokemon["id"],                                           # 0
+            TYPES_NAME_TO_ID[active_pokemon_stats["type1"]],                # 1
+            TYPES_NAME_TO_ID[active_pokemon_stats["type2"]],                # 2
+            active_pokemon["current_hp"],                                   # 3
+            active_pokemon["max_hp"],                                       # 4            
+            active_pokemon["level"],                                        # 5             
+            active_pokemon["status"],                                       # 6                
 
             # Player's Pokemon moves
             *[
