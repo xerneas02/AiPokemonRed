@@ -938,7 +938,7 @@ POSITION_LABEL = {
 
 TYPES_NAME_TO_ID = {
     "NORMAL": 0,
-    "FIGTHING": 1,
+    'FIGHTING': 1,
     "FLYING": 2,
     "POISON": 3,
     "FIRE": 4,

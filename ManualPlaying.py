@@ -13,12 +13,13 @@ import threading
 from PIL import Image
 from Input import *
 import random
+import os
 
 # PyBoy ROM and settings
 ROM_PAH = "Rom/Pokemon Red.gb"
 SHOW_DISPLAY = True  # Set to True for real-time display
 
-nbBattle = 38
+nbBattle = 39
 inBattle = False
 
 # Start PyBoy emulator
@@ -35,13 +36,14 @@ key_mapping = {
     'q': 'left',
     's': 'down',
     'd': 'right',
-    'space': 'a',
+    'a': 'a',
     'shift': 'b',
-    'a': 'start',
+    'f': 'start',
     'e': 'select',
     'r': 'save',  # "R" key for saving the game state
     'p': 'screen',
-    't': 'attack'
+    't': 'attack',
+    'm': 'walk_throught'
 }
 
 # Store the currently pressed keys
@@ -68,6 +70,31 @@ def on_release(key):
             keys_pressed.discard('b')
         elif key == keyboard.Key.space:
             keys_pressed.discard('a')
+
+def load_random_state(pyboy : PyBoy, folder_path):
+    state_files = [f for f in os.listdir(folder_path) if f.endswith('.state')]
+    
+    random_state_file = random.choice(state_files)
+    
+    load_state(pyboy, os.path.join(folder_path, random_state_file))    
+
+def load_state(pyboy : PyBoy, filename):
+    with open(filename, "rb") as state:
+        pyboy.load_state(state)
+
+    set_battle_animation_off(pyboy)
+    set_text_speed_fast(pyboy)
+
+    #pyboy.gameshark("01FF56D3") # All badges
+    #pyboy.gameshark.add("010138CD") # Walk through walls
+    #pyboy.gameshark.add("01017CCF") # Master balls
+    #pyboy.gameshark.add("01287CCF") # Rare candies
+    #pyboy.gameshark.add("019947D3") # Infinite money
+    pyboy.gameshark.clear_all()
+
+
+
+    print(f"Loaded state: {filename}")
 
 
 # Function to save a screenshot of the emulator screen
@@ -96,21 +123,26 @@ def save_game_state(pyboy, filename="save_state.state"):
 def play_manually():
     global nbBattle, inBattle
 
-    with open("State/battle/onix_39.state", "rb") as state:
-        pyboy.load_state(state)
+    win = 0
+    lose = 0
+    folder_path = "State/battle/"
 
-    set_battle_animation_off(pyboy)
-    set_text_speed_fast(pyboy)
+    load_random_state(pyboy, folder_path)
+    #load_state(pyboy, "State/battle/ondine_43.state")#"save_state.state")
+
+    
 
     total_frames = 0
     done = False
     battle_started = False
+    cheat = True
+
     while not done:
-        time.sleep(0.003)
+        #time.sleep(0.003)
         if not inBattle and pyboy.memory[ENEMY_POKEMONS[0]] != 0:
             inBattle = True
             nbBattle += 1
-            save_game_state(pyboy, f"State/battle/{POKEMON_ID_TO_NAME[pyboy.memory[ENEMY_POKEMONS[0]]]}_{nbBattle}.state")
+            #save_game_state(pyboy, f"State/battle/{POKEMON_ID_TO_NAME[pyboy.memory[ENEMY_POKEMONS[0]]]}_{nbBattle}.state")
         
         if inBattle and pyboy.memory[ENEMY_POKEMONS[0]] == 0:
             inBattle = False
@@ -118,11 +150,20 @@ def play_manually():
         # Check which keys are pressed and send the corresponding action to the game
         for action in keys_pressed.copy():
             if action == 'save':  # Check if the save state button was pressed
-                save_game_state(pyboy, "State/starting_house/save_state.state")
+                save_game_state(pyboy, "save_state.state")
             elif action == 'screen':  # Check if the screenshot button was pressed
                 save_screenshot(pyboy, "screenshot.png")
             elif action == 'attack':
                 switch(pyboy, 0)
+            elif action == 'walk_throught':
+                if cheat:
+                    pyboy.gameshark.remove("010138CD") # Walk through walls
+                    print("Walk through walls disabled")
+                else:
+                    pyboy.gameshark.add("010138CD")
+                    print("Walk through walls enabled")
+                
+                cheat = not cheat
             else:
                 pyboy.button(action)
 
@@ -134,23 +175,41 @@ def play_manually():
 
         if is_on_attack_menu(pyboy):
             battle_started = True
+        
 
         if battle_started:
+            play_random(pyboy)
             pass
-            #attack(pyboy, random.randint(0, 3))
-        
-        #print(is_on_pokemon(pyboy))
-        
 
+        if is_battle_lost(pyboy) or is_battle_won(pyboy):
+            win  += is_battle_won(pyboy)
+            lose += is_battle_lost(pyboy)
+            battle_started = False
+            load_random_state(pyboy, folder_path)
+
+            #print(f"Pourcentage de victoire: {win / (win + lose) * 100}%")
  
         # Display player position
-        state = get_battle_state(pyboy)
-        #if state[0] != 0:
-        #print_state(state)
-        #print("################################################")
+        #state = get_battle_state(pyboy)
         
-
+        
         total_frames += 1
+
+def play_random(pyboy):
+    play = random.randint(0, 6)
+
+    if play != 0:
+        if input_possible(pyboy)["attack"]:
+            attack(pyboy, random.randint(0, 3))
+        else:
+            switch(pyboy, random.randint(0, 5))
+    else:
+        if input_possible(pyboy)["switch"]:
+            switch(pyboy, random.randint(0, 5))
+        else:
+            attack(pyboy, random.randint(0, 3))
+
+
 
 
 # Start the manual control mode
