@@ -1,33 +1,60 @@
 [NEAT]
 # Population size
-pop_size           = 150
+pop_size           = 20
 
 # Number of generations without improvement before terminating
-max_stagnation     = 15
+#max_stagnation     = 15
 
 # Probability of mutating each connection's weight
-weight_mutate_rate = 0.8
+#weight_mutate_rate = 0.8
 
 # Probability of mutating each node's bias
-bias_mutate_rate   = 0.7
+#bias_mutate_rate   = 0.7
 
 # Probability of mutating each node's activation function
-activation_mutate_rate = 0.1
+#activation_mutate_rate = 0.1
 
 # Probability of adding a new connection
-conn_add_prob      = 0.5
+#conn_add_prob      = 0.5
 
 # Probability of adding a new node
-node_add_prob      = 0.2
+#node_add_prob      = 0.2
 
 # Probability of deleting an existing connection
-conn_delete_prob   = 0.5
+#conn_delete_prob   = 0.5
 
 # Probability of deleting an existing node
-node_delete_prob   = 0.2
+#node_delete_prob   = 0.2
 
 # Compatibility threshold for speciation
-compatibility_threshold = 3.0
+#compatibility_threshold = 3.0
+
+# Fitness criterion
+fitness_criterion  = max
+
+# Fitness threshold
+fitness_threshold  = 100.0
+
+# Number of inputs
+#num_inputs         = 12
+
+# Number of outputs
+#num_outputs        = 1
+
+# Activation function
+#activation_default = sigmoid
+
+# Activation options
+#activation_options = sigmoid tanh relu
+
+# Aggregation function
+#aggregation_default = sum
+
+# Aggregation options
+#aggregation_options = sum product min max mean
+
+# Reset on extinction
+reset_on_extinction = True
 
 [DefaultGenome]
 # Node activation options
@@ -49,6 +76,13 @@ bias_mutate_power       = 0.5
 bias_mutate_rate        = 0.7
 bias_replace_rate       = 0.1
 
+# Node add/remove options
+node_add_prob           = 0.2
+node_delete_prob        = 0.2
+
+# Feed-forward option
+feed_forward            = True
+
 # Genome compatibility options
 compatibility_disjoint_coefficient = 1.0
 compatibility_weight_coefficient   = 0.5
@@ -62,8 +96,8 @@ initial_connection      = full_direct
 
 # Node options
 num_hidden              = 0
-num_inputs              = 12
-num_outputs             = 5
+num_inputs              = 79
+num_outputs             = 9
 response_init_mean      = 1.0
 response_init_stdev     = 0.0
 response_max_value      = 30.0

@@ -14,6 +14,7 @@ from PIL import Image
 from Input import *
 import random
 import os
+from Env.PokemonRedBattleEnv import load_random_state
 
 # PyBoy ROM and settings
 ROM_PAH = "Rom/Pokemon Red.gb"
@@ -70,31 +71,6 @@ def on_release(key):
             keys_pressed.discard('b')
         elif key == keyboard.Key.space:
             keys_pressed.discard('a')
-
-def load_random_state(pyboy : PyBoy, folder_path):
-    state_files = [f for f in os.listdir(folder_path) if f.endswith('.state')]
-    
-    random_state_file = random.choice(state_files)
-    
-    load_state(pyboy, os.path.join(folder_path, random_state_file))    
-
-def load_state(pyboy : PyBoy, filename):
-    with open(filename, "rb") as state:
-        pyboy.load_state(state)
-
-    set_battle_animation_off(pyboy)
-    set_text_speed_fast(pyboy)
-
-    #pyboy.gameshark("01FF56D3") # All badges
-    #pyboy.gameshark.add("010138CD") # Walk through walls
-    #pyboy.gameshark.add("01017CCF") # Master balls
-    #pyboy.gameshark.add("01287CCF") # Rare candies
-    #pyboy.gameshark.add("019947D3") # Infinite money
-    pyboy.gameshark.clear_all()
-
-
-
-    print(f"Loaded state: {filename}")
 
 
 # Function to save a screenshot of the emulator screen
@@ -154,7 +130,7 @@ def play_manually():
             elif action == 'screen':  # Check if the screenshot button was pressed
                 save_screenshot(pyboy, "screenshot.png")
             elif action == 'attack':
-                switch(pyboy, 0)
+                load_random_state(pyboy, folder_path)
             elif action == 'walk_throught':
                 if cheat:
                     pyboy.gameshark.remove("010138CD") # Walk through walls
@@ -169,12 +145,6 @@ def play_manually():
 
         # Advance the game by one tick
         pyboy.tick()
-        
-        if is_battle_started(pyboy):
-            pyboy.button('a')
-
-        if is_on_attack_menu(pyboy):
-            battle_started = True
         
 
         if battle_started:

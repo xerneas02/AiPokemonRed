@@ -221,9 +221,13 @@ def switch(pyboy: PyBoy, index : int):
 
     hasnt_switched = True
 
+    i = 0
     while get_pokemon_hp(pyboy, index) == 0 or is_pokemon_main(pyboy, index):
         index = (index + 1) % 6
-
+        i += 1
+        if i == 6:
+            return
+        
     iteration = 0
     while hasnt_switched and iteration < 10000:
         iteration += 1 
@@ -327,7 +331,7 @@ def attack(pyboy: PyBoy, index : int):
 
     screen = pyboy.screen.ndarray
 
-    while is_waiting(pyboy) :        
+    while is_waiting(pyboy) :      
         for _ in range(4):
             pyboy.tick()
         if np.array_equal(screen[130][147], [0, 0, 0, 255]) or is_gain_lvl(pyboy):
