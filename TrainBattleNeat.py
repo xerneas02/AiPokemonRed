@@ -2,7 +2,7 @@ import neat
 import os
 import pickle
 from Env.PokemonRedBattleEnv import PokemonRedBattleEnv
-from BestGenomeSaver import BestGenomeSaver
+from Callbacks import BestGenomeSaver
 
 def eval_genomes(genomes, config, env):
     for genome_id, genome in genomes:
