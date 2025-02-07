@@ -21,9 +21,7 @@ def eval_genomes(genomes, config, rom_path, state_path, progress_counter):
     with Pool(processes=cpu_count()) as pool:
         results = pool.map(eval_genome, genome_config_tuples)
     for genome, result in zip(genomes, results):
-        #print(f"Genome {genome[1].fitness} result: {result.fitness}")
         genome[1].fitness = result.fitness
-        print(f"Genome {genome[1].key} fitness: {genome[1].fitness}")
     
 def eval_genomes_sequential(genomes, config, rom_path, state_path, progress_counter):
     for genome_id, genome in genomes:
