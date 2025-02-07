@@ -43,16 +43,18 @@ def play_action(pyboy, action):
 
 
 class PokemonRedBattleEnv:
-    def __init__(self, rom_path, state_path='State/battle/', show_display=False):
+    def __init__(self, rom_path, state_path='State/battle/', show_display=False, progress_counter=None):
         # Initialize PyBoy
         window_type = "SDL2" if show_display else "null"
-        self.pyboy = PyBoy(rom_path, window_type=window_type)
+        self.pyboy = PyBoy(rom_path, window=window_type)
         
         if show_display:
             self.pyboy.set_emulation_speed(0)
         else:
             self.pyboy.set_emulation_speed(1_000_000)
+            
         
+        self.progress_counter = progress_counter
         self.state_path = state_path
         self.state = None
         self.reset()
@@ -74,7 +76,7 @@ class PokemonRedBattleEnv:
         if is_battle_won(self.pyboy):
             reward = 1.0
             done = True
-        elif is_battle_lost(self.pyboy) or self.steps >= 200:
+        elif is_battle_lost(self.pyboy):
             reward = -1.0
             done = True
         else:
@@ -82,20 +84,15 @@ class PokemonRedBattleEnv:
             done = False
 
         if done:
-            self.nb_battles += 1
-            print(f"Battle: {self.nb_battles}/{POPULATION_SIZE*BATTLE_PER_GENOM}")
-            if self.nb_battles >= 50*10:
-                self.nb_battles = 0
             self.reset()
 
-        self.steps += 1
         return self.state, reward, done, {}
 
     def fitness(self, genome, config):
         # Implement the fitness function for neat-python
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         total_fitness = 0.0
-        for _ in range(BATTLE_PER_GENOM):
+        for battle_num in range(BATTLE_PER_GENOM):
             observation = self.reset()
             fitness = 0.0
             done = False
@@ -105,5 +102,6 @@ class PokemonRedBattleEnv:
                 observation, reward, done, _ = self.step(int(action))
                 fitness += reward
             total_fitness += fitness
+            print(f"Genome {genome.key} - Battle {battle_num + 1}/{BATTLE_PER_GENOM}")
         print(f"Genome {genome.key} fitness: {total_fitness / BATTLE_PER_GENOM}")
-        return total_fitness / BATTLE_PER_GENOM 
+        return total_fitness / BATTLE_PER_GENOM
