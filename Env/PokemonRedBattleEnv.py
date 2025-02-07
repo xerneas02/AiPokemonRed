@@ -6,6 +6,7 @@ import neat
 from Input import input_possible, attack, switch, is_battle_lost, is_battle_won, is_on_attack_menu
 from State import get_battle_state
 from AccessMemory import set_battle_animation_off, set_text_speed_fast
+from Constante import BATTLE_PER_GENOM, POPULATION_SIZE
 
 def load_random_state(pyboy: PyBoy, folder_path='State/battle/'):
     state_files = [f for f in os.listdir(folder_path) if f.endswith('.state')]
@@ -82,7 +83,7 @@ class PokemonRedBattleEnv:
 
         if done:
             self.nb_battles += 1
-            print(f"Battle: {self.nb_battles}/{50*10}")
+            print(f"Battle: {self.nb_battles}/{POPULATION_SIZE*BATTLE_PER_GENOM}")
             if self.nb_battles >= 50*10:
                 self.nb_battles = 0
             self.reset()
@@ -94,7 +95,7 @@ class PokemonRedBattleEnv:
         # Implement the fitness function for neat-python
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         total_fitness = 0.0
-        for _ in range(10):  # Evaluate on 10 random battles
+        for _ in range(BATTLE_PER_GENOM):
             observation = self.reset()
             fitness = 0.0
             done = False
@@ -104,5 +105,5 @@ class PokemonRedBattleEnv:
                 observation, reward, done, _ = self.step(int(action))
                 fitness += reward
             total_fitness += fitness
-        print(f"Genome {genome.key} fitness: {total_fitness / 10}")
-        return total_fitness / 10  # Average fitness over 10 battles
+        print(f"Genome {genome.key} fitness: {total_fitness / BATTLE_PER_GENOM}")
+        return total_fitness / BATTLE_PER_GENOM 

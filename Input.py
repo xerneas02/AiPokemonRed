@@ -225,7 +225,7 @@ def switch(pyboy: PyBoy, index : int):
     while get_pokemon_hp(pyboy, index) == 0 or is_pokemon_main(pyboy, index):
         index = (index + 1) % 6
         i += 1
-        if i == 6:
+        if i > 6:
             return
         
     iteration = 0
@@ -288,9 +288,15 @@ def attack(pyboy: PyBoy, index : int):
     last_down = False
     should_attack = False
 
+    
     if get_pp(pyboy, 0) != 0 or get_pp(pyboy, 1) != 0 or get_pp(pyboy, 2) != 0 or get_pp(pyboy, 3) != 0:
+        i = 0
         while get_pp(pyboy, index) == 0:
             index = (index + 1) % 4
+            
+            i += 1
+            if i > 4:
+                return
 
     while hasnt_attacked:
         for _ in range(4):

@@ -123,11 +123,10 @@ cython_debug/
 # VS Code
 .vscode/
 
-# Logs
 Logs/
 
-# Model
 Model/
 
-# Rom
 Rom/
+
+best_genomes/
