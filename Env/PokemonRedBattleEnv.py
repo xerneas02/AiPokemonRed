@@ -12,6 +12,7 @@ def load_random_state(pyboy: PyBoy, folder_path='State/battle/'):
     state_files = [f for f in os.listdir(folder_path) if f.endswith('.state')]
     random_state_file = random.choice(state_files)
     load_state(pyboy, os.path.join(folder_path, random_state_file))
+    return random_state_file
 
 def load_state(pyboy: PyBoy, filename):
     with open(filename, "rb") as state:
@@ -60,9 +61,10 @@ class PokemonRedBattleEnv:
         self.reset()
         self.steps = 0
         self.nb_battles = 0
+        self.state_file = ""
 
     def reset(self):
-        load_random_state(self.pyboy, self.state_path)
+        self.state_file = load_random_state(self.pyboy, self.state_path)
         self.state = get_battle_state(self.pyboy)
         self.total_reward = 0.0
         self.steps = 0
@@ -79,12 +81,15 @@ class PokemonRedBattleEnv:
         elif is_battle_lost(self.pyboy):
             reward = -1.0
             done = True
+        elif self.steps >= 500:
+            reward = -0.5
+            done = True
+            print(f"Time out - {self.state_file}")
         else:
             reward = 0.0
             done = False
-
-        if done:
-            self.reset()
+        
+        self.steps += 1
 
         return self.state, reward, done, {}
 
@@ -93,7 +98,9 @@ class PokemonRedBattleEnv:
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         total_fitness = 0.0
         for battle_num in range(BATTLE_PER_GENOM):
-            observation = self.reset()
+            state_file = self.reset()
+            print(f"Start - Genome {genome.key} - Battle {battle_num + 1}/{BATTLE_PER_GENOM} - Loaded state: {self.state_file}")
+            observation = self.state
             fitness = 0.0
             done = False
             while not done:
@@ -102,6 +109,6 @@ class PokemonRedBattleEnv:
                 observation, reward, done, _ = self.step(int(action))
                 fitness += reward
             total_fitness += fitness
-            print(f"Genome {genome.key} - Battle {battle_num + 1}/{BATTLE_PER_GENOM}")
+            print(f"End - Genome {genome.key} - Battle {battle_num + 1}/{BATTLE_PER_GENOM}")
         print(f"Genome {genome.key} fitness: {total_fitness / BATTLE_PER_GENOM}")
         return total_fitness / BATTLE_PER_GENOM

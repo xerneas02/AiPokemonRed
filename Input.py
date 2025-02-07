@@ -229,8 +229,9 @@ def switch(pyboy: PyBoy, index : int):
             return
         
     iteration = 0
-    while hasnt_switched and iteration < 10000:
-        iteration += 1 
+    while hasnt_switched and iteration < 1000:
+        iteration += 1
+        
         for _ in range(4):
             pyboy.tick()
 
@@ -266,6 +267,9 @@ def switch(pyboy: PyBoy, index : int):
 
     screen = pyboy.screen.ndarray
 
+    if iteration >= 1000:
+        print("Switch failed ?")
+
     iteration = 0
     while (is_waiting(pyboy) or is_all_range_same_color(pyboy, (103, 6), (136, 152))) and iteration < 1000:        
         for _ in range(4):
@@ -298,7 +302,10 @@ def attack(pyboy: PyBoy, index : int):
             if i > 4:
                 return
 
-    while hasnt_attacked:
+    iteration = 0
+    while hasnt_attacked and iteration < 1000:
+        iteration += 1
+        
         for _ in range(4):
             pyboy.tick()
         attack = is_on_attack(pyboy)
@@ -334,10 +341,15 @@ def attack(pyboy: PyBoy, index : int):
 
         if is_waiting(pyboy):
             hasnt_attacked = False
+            
+    if iteration >= 1000:
+        print("Attack failed ?")
 
     screen = pyboy.screen.ndarray
 
-    while is_waiting(pyboy) :      
+    iteration = 0
+    while is_waiting(pyboy) and iteration < 1000:
+        iteration += 1      
         for _ in range(4):
             pyboy.tick()
         if np.array_equal(screen[130][147], [0, 0, 0, 255]) or is_gain_lvl(pyboy):
