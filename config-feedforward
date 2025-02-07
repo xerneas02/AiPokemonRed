@@ -1,6 +1,6 @@
 [NEAT]
 # Population size
-pop_size           = 20
+pop_size           = 2
 
 # Number of generations without improvement before terminating
 #max_stagnation     = 15

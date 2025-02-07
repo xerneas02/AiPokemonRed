@@ -9,12 +9,26 @@ def eval_genome(genome_config_tuple):
     genome, config, rom_path, state_path, progress_counter = genome_config_tuple
     env = PokemonRedBattleEnv(rom_path, state_path, show_display=False, progress_counter=progress_counter)
     genome.fitness = env.fitness(genome, config)
+    if genome.fitness is None:
+        genome.fitness = 0.0
+    
+    progress_counter.value += 1
+    print(f"Genome {genome.key} fitness: {genome.fitness}")
     return genome
 
 def eval_genomes(genomes, config, rom_path, state_path, progress_counter):
     genome_config_tuples = [(genome, config, rom_path, state_path, progress_counter) for genome_id, genome in genomes]
     with Pool(processes=cpu_count()) as pool:
-        pool.map(eval_genome, genome_config_tuples)
+        results = pool.map(eval_genome, genome_config_tuples)
+    for genome, result in zip(genomes, results):
+        #print(f"Genome {genome[1].fitness} result: {result.fitness}")
+        genome[1].fitness = result.fitness
+        print(f"Genome {genome[1].key} fitness: {genome[1].fitness}")
+    
+def eval_genomes_sequential(genomes, config, rom_path, state_path, progress_counter):
+    for genome_id, genome in genomes:
+        eval_genome((genome, config, rom_path, state_path, progress_counter))
+
 
 def run_neat(config_file):
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
@@ -42,7 +56,10 @@ def run_neat(config_file):
         print(f"Evaluated {progress_counter.value} genomes")
 
     winner = p.run(eval_genomes_with_progress, n=50)
-    print('\nBest genome:\n{!s}'.format(winner))
+    if winner is not None:
+        print(f'\nBest genome:\n{winner}')
+    else:
+        print('No winner found.')
 
 if __name__ == "__main__":
     config_path = os.path.join(os.path.dirname(__file__), 'config-feedforward')

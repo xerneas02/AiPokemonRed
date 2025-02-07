@@ -84,7 +84,7 @@ class PokemonRedBattleEnv:
         elif self.steps >= 500:
             reward = -0.5
             done = True
-            print(f"Time out - {self.state_file}")
+            #print(f"Time out - {self.state_file}")
         else:
             reward = 0.0
             done = False
@@ -109,6 +109,4 @@ class PokemonRedBattleEnv:
                 observation, reward, done, _ = self.step(int(action))
                 fitness += reward
             total_fitness += fitness
-            print(f"End - Genome {genome.key} - Battle {battle_num + 1}/{BATTLE_PER_GENOM}")
-        print(f"Genome {genome.key} fitness: {total_fitness / BATTLE_PER_GENOM}")
         return total_fitness / BATTLE_PER_GENOM
