@@ -1,4 +1,5 @@
 import neat
+import Visualize
 import os
 import pickle
 from Env.PokemonRedBattleEnv import PokemonRedBattleEnv
@@ -53,9 +54,12 @@ def run_neat(config_file):
         eval_genomes(genomes, config, rom_path, state_path, progress_counter)
         print(f"Evaluated {progress_counter.value} genomes")
 
-    winner = p.run(eval_genomes_with_progress, n=50)
+    winner = p.run(eval_genomes_with_progress, n=10)
     if winner is not None:
         print(f'\nBest genome:\n{winner}')
+        Visualize.draw_net(config, winner, True)
+        Visualize.plot_stats(stats, ylog=False, view=True)
+
     else:
         print('No winner found.')
 
