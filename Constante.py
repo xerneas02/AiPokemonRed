@@ -1,7 +1,7 @@
 ImageSize = 84
 Ncouleur = 4
 
-POPULATION_SIZE = 20
+POPULATION_SIZE = 32
 BATTLE_PER_GENOM = 32
 
 action_space = ["up", "down", "left", "right", "a", "b"]
