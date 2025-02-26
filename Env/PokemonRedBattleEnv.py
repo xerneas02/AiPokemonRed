@@ -5,7 +5,7 @@ import numpy as np
 import neat
 from Input import input_possible, attack, switch, is_battle_lost, is_battle_won, is_on_attack_menu
 from State import get_battle_state
-from AccessMemory import set_battle_animation_off, set_text_speed_fast
+from AccessMemory import set_battle_animation_off, set_text_speed_fast, get_number_of_turn
 from Constante import BATTLE_PER_GENOM, POPULATION_SIZE
 
 def load_random_state(pyboy: PyBoy, folder_path='State/battle/'):
@@ -62,10 +62,12 @@ class PokemonRedBattleEnv:
         self.steps = 0
         self.nb_battles = 0
         self.state_file = ""
+        self.starting_party_hp = 0
 
     def reset(self):
         self.state_file = load_random_state(self.pyboy, self.state_path)
         self.state = get_battle_state(self.pyboy)
+        self.starting_party_hp = self.state[3] + self.state[42] + self.state[49] + self.state[56] + self.state[63] + self.state[70]
         self.total_reward = 0.0
         self.steps = 0
         return self.state
@@ -91,6 +93,8 @@ class PokemonRedBattleEnv:
         
         self.steps += 1
 
+        reward += self._step_reward()
+
         return self.state, reward, done, {}
 
     def fitness(self, genome, config):
@@ -108,5 +112,44 @@ class PokemonRedBattleEnv:
                 action = max(action, key=abs)
                 observation, reward, done, _ = self.step(int(action))
                 fitness += reward
+            fitness += self._end_reward()
             total_fitness += fitness
         return total_fitness / BATTLE_PER_GENOM
+    
+    def _step_reward(self):
+        return 0.0
+    
+    def _hp_reward(self):
+        """
+        Calcule la récompense basée sur le ratio des HP restants.
+        Lorsque le ratio est de 1, renvoie +0.5; lorsque 0, renvoie -0.5.
+        """
+        current_hp = (self.state[3] + self.state[42] + 
+                      self.state[49] + self.state[56] + 
+                      self.state[63] + self.state[70])
+        hp_ratio = current_hp / self.starting_party_hp
+        weight = 0.5
+        return weight * (2 * hp_ratio - 1)
+
+    def _turn_reward(self):
+        """
+        Calcule la récompense basée sur la rapidité du combat.
+        Utilise une fonction tanh pour créer une transition smooth.
+        Pour un nombre de tours bien inférieur à max_turns, la récompense approche +0.5,
+        et pour un nombre de tours supérieur, la valeur devient négative.
+        """
+        turn = get_number_of_turn(self.pyboy)
+        max_turns = 100      # Seuil déterminant le passage au négatif
+        smooth_factor = 10   # Ajuste la douceur de la transition
+        import math
+        return 0.5 * math.tanh((max_turns - turn) / smooth_factor)
+
+    def _end_reward(self):
+        """
+        Combine les sous-récompenses avec leurs coefficients.
+        Par exemple, on peut appliquer un poids coef_hp pour la récompense HP
+        et un poids coef_turn pour la récompense de rapidité.
+        """
+        coef_hp = 1.0    # Coefficient pour la récompense basée sur les HP
+        coef_turn = 0.5  # Coefficient pour la récompense basée sur le nombre de tours
+        return coef_hp * self._hp_reward() + coef_turn * self._turn_reward()

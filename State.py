@@ -58,14 +58,14 @@ def get_battle_state(pyboy : pyboy.PyBoy):
                 item
                 for i in range(4)
                 for item in (
-                    active_pokemon["moves"][i]["id"],
-                    moves_effectiveness[i],
-                    moves_info[i]["effect"],
-                    moves_info[i]["power"],
-                    moves_info[i]["type"],
-                    moves_info[i]["accuracy"],
-                    moves_info[i]["pp"],
-                    active_pokemon["pp_moves"][i]
+                    active_pokemon["moves"][i]["id"],                       # 7 - 15 - 23 - 31
+                    moves_effectiveness[i],                                 # 8 - 16 - 24 - 32
+                    moves_info[i]["effect"],                                # 9 - 17 - 25 - 33
+                    moves_info[i]["power"],                                 # 10 - 18 - 26 - 34
+                    moves_info[i]["type"],                                  # 11 - 19 - 27 - 35
+                    moves_info[i]["accuracy"],                              # 12 - 20 - 28 - 36
+                    moves_info[i]["pp"],                                    # 13 - 21 - 29 - 37
+                    active_pokemon["pp_moves"][i]                           # 14 - 22 - 30 - 38
                 )
             ],
 
@@ -75,22 +75,22 @@ def get_battle_state(pyboy : pyboy.PyBoy):
                 item
                 for i in range(5)
                 for item in (
-                    pokemon_party[i]["id"],
-                    pokemon_party[i]["type1"],
-                    pokemon_party[i]["type2"],
-                    pokemon_party[i]["current_hp"],
-                    pokemon_party[i]["max_hp"],
-                    pokemon_party[i]["level"],
-                    pokemon_party[i]["status"]
+                    pokemon_party[i]["id"],                                 # 39 - 46 - 53 - 60 - 67
+                    pokemon_party[i]["type1"],                              # 40 - 47 - 54 - 61 - 68
+                    pokemon_party[i]["type2"],                              # 41 - 48 - 55 - 62 - 69
+                    pokemon_party[i]["current_hp"],                         # 42 - 49 - 56 - 63 - 70
+                    pokemon_party[i]["max_hp"],                             # 43 - 50 - 57 - 64 - 71     
+                    pokemon_party[i]["level"],                              # 44 - 51 - 58 - 65 - 72
+                    pokemon_party[i]["status"]                              # 45 - 52 - 59 - 66 - 73
                 )
             ],
 
             # Enemy's Pokemon
-            enemy_pokemon["id"],
-            TYPES_NAME_TO_ID[enemy_pokemon_stats["type1"]],
-            TYPES_NAME_TO_ID[enemy_pokemon_stats["type2"]],
-            enemy_pokemon["current_hp"],
-            enemy_pokemon["max_hp"]
+            enemy_pokemon["id"],                                            # 74
+            TYPES_NAME_TO_ID[enemy_pokemon_stats["type1"]],                 # 75    
+            TYPES_NAME_TO_ID[enemy_pokemon_stats["type2"]],                 # 76
+            enemy_pokemon["current_hp"],                                    # 77
+            enemy_pokemon["max_hp"]                                         # 78
         ])
 
         return state
