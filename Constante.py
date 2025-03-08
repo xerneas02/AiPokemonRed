@@ -955,7 +955,7 @@ TYPES_NAME_TO_ID = {
     "ROCK": 11,
     "BIRD": 12,
     "BUG": 13,
-    "GHOTS": 14,
+    "GHOST": 14,
     "DRAGON": 15
 }
 

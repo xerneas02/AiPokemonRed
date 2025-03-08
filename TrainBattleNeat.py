@@ -12,7 +12,7 @@ def eval_genome(genome_config_tuple):
     genome.fitness = env.fitness(genome, config)
     if genome.fitness is None:
         genome.fitness = 0.0
-    
+     
     progress_counter.value += 1
     print(f"Genome {genome.key} fitness: {genome.fitness}")
     return genome
@@ -34,7 +34,7 @@ def run_neat(config_file):
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_file)
 
-    rom_path = "Rom/Pokemon Red.gb"
+    rom_path = "Rom/pokered.gbc"
     state_path = "State/battle/"
 
     p = neat.Population(config)

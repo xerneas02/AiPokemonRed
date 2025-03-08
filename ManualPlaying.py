@@ -17,7 +17,7 @@ import os
 from Env.PokemonRedBattleEnv import load_random_state
 
 # PyBoy ROM and settings
-ROM_PAH = "Rom/Pokemon Red.gb"
+ROM_PAH = "Rom/pokered.gbc"
 SHOW_DISPLAY = True  # Set to True for real-time display
 
 nbBattle = 39

@@ -28,6 +28,7 @@ def load_state(pyboy: PyBoy, filename):
             pyboy.tick()
             
         pyboy.button('a')
+    return filename
 
 def play_action(pyboy, action):
     possible_inputs = input_possible(pyboy)
@@ -58,14 +59,19 @@ class PokemonRedBattleEnv:
         self.progress_counter = progress_counter
         self.state_path = state_path
         self.state = None
+        self.state_files = [state_path + f for f in os.listdir(self.state_path) if f.endswith('.state')]
+        self.current_state = 0
         self.reset()
         self.steps = 0
         self.nb_battles = 0
         self.state_file = ""
         self.starting_party_hp = 0
-
+        
     def reset(self):
-        self.state_file = load_random_state(self.pyboy, self.state_path)
+        self.state_file = load_state(self.pyboy, self.state_files[self.current_state])
+        self.current_state += 1
+        self.current_state = self.current_state%len(self.state_files)
+
         self.state = get_battle_state(self.pyboy)
         self.starting_party_hp = self.state[3] + self.state[42] + self.state[49] + self.state[56] + self.state[63] + self.state[70]
         self.total_reward = 0.0
@@ -98,22 +104,32 @@ class PokemonRedBattleEnv:
         return self.state, reward, done, {}
 
     def fitness(self, genome, config):
-        # Implement the fitness function for neat-python
+        # Implement the fitness function for neat-python using each state file in the folder
         net = neat.nn.FeedForwardNetwork.create(genome, config)
         total_fitness = 0.0
+        wins = 0  # Counter for victories
+        
         for battle_num in range(BATTLE_PER_GENOM):
-            state_file = self.reset()
+            state_file =             self.reset()
             print(f"Start - Genome {genome.key} - Battle {battle_num + 1}/{BATTLE_PER_GENOM} - Loaded state: {self.state_file}")
             observation = self.state
             fitness = 0.0
             done = False
+            
             while not done:
                 action = net.activate(observation)
                 action = max(action, key=abs)
                 observation, reward, done, _ = self.step(int(action))
                 fitness += reward
+            
+            # Determine if the battle was won and count it
+            if is_battle_won(self.pyboy):
+                wins += 1
+                
             fitness += self._end_reward()
             total_fitness += fitness
+        
+        print(f"Genome {genome.key} achieved {wins} wins out of {BATTLE_PER_GENOM} battles")
         return total_fitness / BATTLE_PER_GENOM
     
     def _step_reward(self):
