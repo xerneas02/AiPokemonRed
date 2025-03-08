@@ -1,6 +1,6 @@
 [NEAT]
 # Population size
-pop_size           = 32
+pop_size           = 64           ; Increased population size for more diversity
 
 # Number of generations without improvement before terminating
 #max_stagnation     = 15
@@ -77,8 +77,8 @@ bias_mutate_rate        = 0.7
 bias_replace_rate       = 0.1
 
 # Node add/remove options
-node_add_prob           = 0.2
-node_delete_prob        = 0.2
+node_add_prob           = 0.15       ; slightly reduced node addition probability
+node_delete_prob        = 0.15       ; slightly reduced node deletion probability
 
 # Feed-forward option
 feed_forward            = True
@@ -88,8 +88,8 @@ compatibility_disjoint_coefficient = 1.0
 compatibility_weight_coefficient   = 0.5
 
 # Connection options
-conn_add_prob           = 0.5
-conn_delete_prob        = 0.5
+conn_add_prob           = 0.45       ; slightly reduced connection addition probability
+conn_delete_prob        = 0.45       ; slightly reduced connection deletion probability
 enabled_default         = True
 enabled_mutate_rate     = 0.01
 initial_connection      = full_direct
