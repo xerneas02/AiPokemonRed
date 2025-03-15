@@ -28,7 +28,6 @@ def eval_genomes_sequential(genomes, config, rom_path, state_path, progress_coun
     for genome_id, genome in genomes:
         eval_genome((genome, config, rom_path, state_path, progress_counter))
 
-
 def run_neat(config_file):
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
@@ -37,14 +36,29 @@ def run_neat(config_file):
     rom_path = "Rom/pokered.gbc"
     state_path = "State/battle/"
 
-    p = neat.Population(config)
+    # Création du dossier 'checkpoint' s'il n'existe pas
+    checkpoint_dir = 'checkpoint'
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    
+    # Vérification de l'existence d'un checkpoint pour reprendre l'entraînement
+    checkpoint_file = os.path.join(checkpoint_dir, 'neat-checkpoint')
+    if os.path.exists(checkpoint_file):
+        p = neat.Checkpointer.restore_checkpoint(checkpoint_file)
+        print(f"Chargement du checkpoint depuis {checkpoint_file}")
+    else:
+        p = neat.Population(config)
+
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
 
-    # Add the custom reporter to save the best genome
+    # Ajout d'un reporter pour sauvegarder le meilleur genome
     best_genome_saver = BestGenomeSaver(save_path='./best_genomes')
     p.add_reporter(best_genome_saver)
+    
+    # Ajout d'un reporter pour sauvegarder un checkpoint tous les 5 générations dans le dossier 'checkpoint'
+    checkpoint_prefix = os.path.join(checkpoint_dir, 'neat-checkpoint-')
+    p.add_reporter(neat.Checkpointer(1, filename_prefix=checkpoint_prefix))
 
     manager = Manager()
     progress_counter = manager.Value('i', 0)
@@ -54,12 +68,11 @@ def run_neat(config_file):
         eval_genomes(genomes, config, rom_path, state_path, progress_counter)
         print(f"Evaluated {progress_counter.value} genomes")
 
-    winner = p.run(eval_genomes_with_progress, n=10)
+    winner = p.run(eval_genomes_with_progress, n=20)
     if winner is not None:
         print(f'\nBest genome:\n{winner}')
         Visualize.draw_net(config, winner, True)
         Visualize.plot_stats(stats, ylog=False, view=True)
-
     else:
         print('No winner found.')
 
