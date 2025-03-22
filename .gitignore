@@ -127,6 +127,8 @@ Logs/
 
 Model/
 
-Rom/
+#Rom/
 
 best_genomes/
+
+checkpoint/
