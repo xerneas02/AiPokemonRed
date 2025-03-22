@@ -7,6 +7,7 @@ from Input import input_possible, attack, switch, is_battle_lost, is_battle_won,
 from State import get_battle_state
 from AccessMemory import set_battle_animation_off, set_text_speed_fast, get_number_of_turn
 from Constante import BATTLE_PER_GENOM, POPULATION_SIZE
+from math import log2
 
 def load_random_state(pyboy: PyBoy, folder_path='State/battle/'):
     state_files = [f for f in os.listdir(folder_path) if f.endswith('.state')]
@@ -32,17 +33,19 @@ def load_state(pyboy: PyBoy, filename):
 
 def play_action(pyboy, action):
     possible_inputs = input_possible(pyboy)
+    index_attack, index_switch = -1, -1
+
     if 0 <= action <= 3:
         if possible_inputs["attack"]:
-            attack(pyboy, action)
+            index_attack = attack(pyboy, action)
         else:
-            switch(pyboy, random.randint(0, 5))
+            index_switch = switch(pyboy, random.randint(0, 5))
     elif 4 <= action <= 9:
         if possible_inputs["switch"]:
-            switch(pyboy, action - 4)
+            index_switch = switch(pyboy, action - 4)
         else:
-            attack(pyboy, random.randint(0, 3))
-
+            index_attack = attack(pyboy, random.randint(0, 3))
+    return index_attack, index_switch
 
 class PokemonRedBattleEnv:
     def __init__(self, rom_path, state_path='State/battle/', show_display=False, progress_counter=None):
@@ -80,7 +83,7 @@ class PokemonRedBattleEnv:
 
     def step(self, action):
         # Execute one time step within the environment
-        play_action(self.pyboy, action)
+        index_attack, _ = play_action(self.pyboy, action)
         self.state = get_battle_state(self.pyboy)
         
         if is_battle_won(self.pyboy):
@@ -99,7 +102,7 @@ class PokemonRedBattleEnv:
         
         self.steps += 1
 
-        reward += self._step_reward()
+        reward += self._step_reward(index_attack)
 
         return self.state, reward, done, {}
 
@@ -132,8 +135,13 @@ class PokemonRedBattleEnv:
         print(f"Genome {genome.key} achieved {wins} wins out of {BATTLE_PER_GENOM} battles")
         return total_fitness / BATTLE_PER_GENOM
     
-    def _step_reward(self):
-        return 0.0
+    def _step_reward(self, index_attack):
+        """
+        Calcule la récompense basée sur l'efficacité de l'attaque.
+        log2(effectiveness) / 2 soit -1 si double resistance, -0.5 si simple resistance, 0 si normal, 0.5 si super effective, 1 si double super effective.
+        """
+        reward_attack_effectiveness = 0.0 if index_attack == -1 else log2(self.state[8 + 8 * index_attack]) / 2 
+        return reward_attack_effectiveness*0.1
     
     def _hp_reward(self):
         """

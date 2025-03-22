@@ -226,7 +226,7 @@ def switch(pyboy: PyBoy, index : int):
         index = (index + 1) % 6
         i += 1
         if i > 6:
-            return
+            return -1
         
     iteration = 0
     while hasnt_switched and iteration < 1000:
@@ -277,6 +277,8 @@ def switch(pyboy: PyBoy, index : int):
             iteration += 1
         if np.array_equal(screen[130][147], [0, 0, 0, 255]) or is_gain_lvl(pyboy):
             pyboy.button('a')
+
+    return index
         
     
 
@@ -300,7 +302,7 @@ def attack(pyboy: PyBoy, index : int):
             
             i += 1
             if i > 4:
-                return
+                return -1
 
     iteration = 0
     while hasnt_attacked and iteration < 1000:
@@ -354,6 +356,8 @@ def attack(pyboy: PyBoy, index : int):
             pyboy.tick()
         if np.array_equal(screen[130][147], [0, 0, 0, 255]) or is_gain_lvl(pyboy):
             pyboy.button('a')
+
+    return index
 
 def input_possible(pyboy : PyBoy):
     """
